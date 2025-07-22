@@ -1,0 +1,18 @@
+
+services:
+  connectors-service:
+    image: ${DOCKER_REGISTRY:-ghcr.io/sentiric}/sentiric-connectors-service:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sentiric_connectors_service
+    env_file:
+      - ./.env
+    networks:
+      - sentiric-net
+    restart: unless-stopped
+
+networks:
+  sentiric-net:
+    name: ${NETWORK_NAME:-sentiric-net}
+    driver: bridge

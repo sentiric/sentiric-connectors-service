@@ -12,6 +12,7 @@
 *   Python (or Node.js, Java)
 *   Flask/FastAPI/Express/Spring Boot (for internal APIs)
 *   SDKs and clients for various external APIs (e.g., Salesforce, Zendesk, Shopify).
+* we can use Express.js + BullMQ (Redis)
 
 **API Interactions (As an Internal API Provider):**
 *   Exposes internal APIs for `sentiric-agent-service` (to trigger business logic), and `sentiric-knowledge-service` (to pull data).
