@@ -1,18 +1,23 @@
-
-services:
-  connectors-service:
-    image: ${DOCKER_REGISTRY:-ghcr.io/sentiric}/sentiric-connectors-service:${TAG:-latest}
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: sentiric_connectors_service
-    env_file:
-      - ./.env
-    networks:
-      - sentiric-net
-    restart: unless-stopped
-
 networks:
   sentiric-net:
     name: ${NETWORK_NAME:-sentiric-net}
     driver: bridge
+
+services:
+  connectors-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: sentiric-connectors-service
+    env_file:
+      - ./.env
+    volumes:
+      - ../sentiric-infrastructure/tls/certs:/etc/sentiric/tls:ro
+    ports:
+      - "${CONNECTOR_SERVICE_PORT}:${CONNECTOR_SERVICE_PORT}"
+    networks:
+      - sentiric-net
+    profiles:
+      - default
+    restart: always
