@@ -1,38 +1,54 @@
-# Sentiric Connectors Service
+# 🔌 Sentiric Connectors Service
 
-**Description:** Provides specific API adapters or microservices for integrating Sentiric with various external business systems (e.g., CRM, ERP, Help Desk, E-commerce platforms). This can act as a hub for multiple individual connectors.
+[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![Node.js Version](https://img.shields.io/badge/node-20.x-green.svg)](https://nodejs.org/)
+[![Framework](https://img.shields.io/badge/framework-Fastify-black.svg)](https://www.fastify.io/)
+[![License](https://img.shields.io/badge/license-UNLICENSED-lightgrey.svg)](LICENSE)
 
-**Core Responsibilities:**
-*   Managing authentication and interaction with specific external system APIs.
-*   Fetching data from external systems and translating it into Sentiric's internal data model.
-*   Relaying requests from Sentiric (e.g., "update customer information") to external systems.
-*   If containing multiple connectors, routing requests to the appropriate internal connector logic.
+**Sentiric Connectors Service**, Sentiric platformunun "elleri ve kollarıdır". `agent-service` gibi merkezi servislerin, harici dünya sistemleriyle (CRM'ler, Takvimler, Veritabanları, ERP'ler vb.) konuşmasını sağlayan, yüksek performanslı ve esnek bir entegrasyon katmanıdır.
 
-**Technologies:**
-*   Python (or Node.js, Java)
-*   Flask/FastAPI/Express/Spring Boot (for internal APIs)
-*   SDKs and clients for various external APIs (e.g., Salesforce, Zendesk, Shopify).
-* we can use Express.js + BullMQ (Redis)
+Bu servis, platformun soyut AI yeteneklerini, gerçek dünya iş süreçlerini (örn: "Google Takvim'de randevu oluştur", "Salesforce'ta müşteri kaydını güncelle") otomatize edebilen somut eylemlere dönüştürür.
 
-**API Interactions (As an Internal API Provider):**
-*   Exposes internal APIs for `sentiric-agent-service` (to trigger business logic), and `sentiric-knowledge-service` (to pull data).
-*   Consumes external APIs (Salesforce, Zendesk, etc.).
+## ✨ Temel Özellikler ve Mimari
 
-**Local Development:**
-1.  Clone this repository: `git clone https://github.com/sentiric/sentiric-connectors-service.git`
-2.  Navigate into the directory: `cd sentiric-connectors-service`
-3.  Install dependencies: `pip install -r requirements.txt` (Python) or `npm install` (Node.js).
-4.  Create a `.env` file from `.env.example` to configure credentials for external systems.
-5.  Start the service: `python app.py` (or equivalent).
+*   **Yüksek Performanslı Altyapı:** Node.js ekosisteminin en hızlı web framework'lerinden biri olan **Fastify** üzerine inşa edilmiştir.
+*   **"Tak-Çıkar" Konektör Deseni:** Sistemin kalbinde, yeni entegrasyonların (konektörlerin) sadece birkaç dosya eklenerek kolayca sisteme dahil edilmesini sağlayan bir **Kayıt Merkezi (Connector Registry)** bulunur. Bu, projenin "Lego Seti" felsefesinin kusursuz bir uygulamasıdır.
+*   **Tip Güvenliği:** Gelen API isteklerinin yapısı, **TypeBox** kullanılarak çalışma zamanında (runtime) doğrulanır. Bu, servisi beklenmedik ve hatalı girdilere karşı son derece dayanıklı kılar.
+*   **Üretime Hazır:**
+    *   **Gözlemlenebilirlik:** Prometheus metrikleri (`/metrics`) ve ortama duyarlı (JSON/Console) yapılandırılmış loglama (`Pino`) ile tam entegrasyon.
+    *   **Dayanıklılık:** `PostgreSQL` gibi bağımlı servislerin sağlıklı olmasını bekleyen `docker-compose` yapılandırması ve "Graceful Shutdown" mekanizması.
+*   **Optimize Edilmiş Dağıtım:** Multi-stage Dockerfile ve `npm ci` kullanımı sayesinde, üretim imajı **~150MB** gibi son derece küçük bir boyuta sahiptir ve CI/CD süreçleri optimize edilmiştir.
 
-**Configuration:**
-Refer to `config/` directory and `.env.example` for service-specific configurations, including external system API keys and integration settings.
+## 🚀 Hızlı Başlangıç (Docker ile)
 
-**Deployment:**
-Designed for containerized deployment (e.g., Docker, Kubernetes). Individual connectors within this service (or as separate microservices) can be scaled independently. Refer to `sentiric-infrastructure`.
+Bu servis, `sentiric-infrastructure` reposundaki merkezi `docker-compose` ile platformun bir parçası olarak çalışmak üzere tasarlanmıştır. Tek başına çalıştırmak ve test etmek için:
 
-**Contributing:**
-We welcome contributions! Please refer to the [Sentiric Governance](https://github.com/sentiric/sentiric-governance) repository for coding standards and contribution guidelines.
+1.  **Altyapıyı Başlatın:** `connectors-service`, `postgres` servisine bağımlıdır. `sentiric-infrastructure` reposundan bu servisi başlatın.
+2.  **`.env` Dosyası Oluşturun:** `.env.docker` dosyasını `.env` olarak kopyalayın ve gerekli API anahtarlarını (örn: `GOOGLE_CALENDAR_API_KEY`) doldurun.
+3.  **Servisi Başlatın:**
+    ```bash
+    docker compose -f docker-compose.service.yml up --build -d
+    ```
+    Loglarda `Server listening at http://0.0.0.0:5005` mesajını gördüğünüzde servis hazır demektir.
 
-**License:**
-This project is licensed under the [License](LICENSE).
+## 🤖 API Kullanımı ve Demo
+
+Servisin API'ını test etmek ve konektör mimarisinin nasıl çalıştığını görmek için lütfen aşağıdaki rehberi inceleyin:
+
+➡️ **[API Kullanım ve Demo Rehberi (DEMO.md)](DEMO.md)**
+
+## 💻 Yerel Geliştirme ve Test
+
+1.  Node.js v20+ ve `npm` kurulu olduğundan emin olun.
+2.  Bağımlılıkları kurun:
+    ```bash
+    npm install
+    ```
+3.  Servisi geliştirme modunda (hot-reload ile) başlatın:
+    ```bash
+    npm run dev
+    ```
+4.  Testleri çalıştırın:
+    ```bash
+    npm test
+    ```

@@ -1,24 +1,30 @@
-# --- STAGE 1: Builder ---
+# --- STAGE 1: Dependencies ---
+# Bu aşama, tüm (dev dahil) bağımlılıkları kurar.
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# --- STAGE 2: Builder ---
+# Bu aşama, TypeScript kodunu JavaScript'e derler.
 FROM node:20-alpine AS builder
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-# --- STAGE 2: Production ---
+# --- STAGE 3: Production ---
+# Bu aşama, sadece üretim için gerekli dosyaları içeren son, hafif imajı oluşturur.
 FROM node:20-alpine
 WORKDIR /app
-
-# Bu ENV satırı aslında gereksiz kalıyor ama iyi bir pratiktir.
 ENV NODE_ENV=production
 
-COPY package*.json ./
-RUN npm ci --omit=dev
-
+# --- HATA DÜZELTMESİ: package-lock.json'ı kopyala ---
+COPY --from=builder /app/package.json /app/package-lock.json ./
 COPY --from=builder /app/dist ./dist
 
-# DÜZELTME: Doğrudan 'node' komutunu çağırmak yerine,
-# package.json'daki 'start' script'imizi çalıştırıyoruz.
-# Bu, NODE_ENV=production atamasının uygulanmasını garanti eder.
-CMD ["npm", "run", "start"]
+# Sadece üretim bağımlılıklarını kur. package-lock.json sayesinde bu hızlı ve tutarlı olacaktır.
+RUN npm ci --omit=dev
+
+# Uygulamayı başlat
+CMD ["node", "dist/index.js"]
