@@ -13,7 +13,7 @@ services:
       - ./.env.docker
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ../sentiric-infrastructure/postgres-init:/docker-entrypoint-initdb.d
+      - ../sentiric-config/postgres-init:/docker-entrypoint-initdb.d
     networks:
       - sentiric-net
     profiles:
@@ -38,7 +38,7 @@ services:
       - ./.env.docker
 
     volumes:
-      - ../sentiric-infrastructure/tls/certs:/etc/sentiric/tls:ro
+      - ../sentiric-config/tls/certs:/etc/sentiric/tls:ro
 
     ports:
       - "${CONNECTOR_SERVICE_PORT}:${CONNECTOR_SERVICE_PORT}"
