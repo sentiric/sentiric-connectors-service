@@ -3,7 +3,7 @@
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![Node.js Version](https://img.shields.io/badge/node-20.x-green.svg)](https://nodejs.org/)
 [![Framework](https://img.shields.io/badge/framework-Fastify-black.svg)](https://www.fastify.io/)
-[![License](https://img.shields.io/badge/license-UNLICENSED-lightgrey.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-UNLICENSED-lightgrey.svg)]()
 
 **Sentiric Connectors Service**, Sentiric platformunun "elleri ve kollarıdır". `agent-service` gibi merkezi servislerin, harici dünya sistemleriyle (CRM'ler, Takvimler, Veritabanları, ERP'ler vb.) konuşmasını sağlayan, yüksek performanslı ve esnek bir entegrasyon katmanıdır.
 
@@ -17,38 +17,23 @@ Bu servis, platformun soyut AI yeteneklerini, gerçek dünya iş süreçlerini (
 *   **Üretime Hazır:**
     *   **Gözlemlenebilirlik:** Prometheus metrikleri (`/metrics`) ve ortama duyarlı (JSON/Console) yapılandırılmış loglama (`Pino`) ile tam entegrasyon.
     *   **Dayanıklılık:** `PostgreSQL` gibi bağımlı servislerin sağlıklı olmasını bekleyen `docker-compose` yapılandırması ve "Graceful Shutdown" mekanizması.
-*   **Optimize Edilmiş Dağıtım:** Multi-stage Dockerfile ve `npm ci` kullanımı sayesinde, üretim imajı **~150MB** gibi son derece küçük bir boyuta sahiptir ve CI/CD süreçleri optimize edilmiştir.
 
-## 🚀 Hızlı Başlangıç (Docker ile)
+## 🔌 API Etkileşimleri
 
-Bu servis, `sentiric-infrastructure` reposundaki merkezi `docker-compose` ile platformun bir parçası olarak çalışmak üzere tasarlanmıştır. Tek başına çalıştırmak ve test etmek için:
+*   **Gelen (Sunucu):** `sentiric-agent-service`'ten (REST/JSON)
+*   **Giden (İstemci):** Harici API'ler (Google Calendar API, Salesforce API vb.)
 
-1.  **Altyapıyı Başlatın:** `connectors-service`, `postgres` servisine bağımlıdır. `sentiric-infrastructure` reposundan bu servisi başlatın.
-2.  **`.env` Dosyası Oluşturun:** `.env.docker` dosyasını `.env` olarak kopyalayın ve gerekli API anahtarlarını (örn: `GOOGLE_CALENDAR_API_KEY`) doldurun.
-3.  **Servisi Başlatın:**
-    ```bash
-    docker compose -f docker-compose.service.yml up --build -d
-    ```
-    Loglarda `Server listening at http://0.0.0.0:5005` mesajını gördüğünüzde servis hazır demektir.
+## 🚀 Yerel Geliştirme
 
-## 🤖 API Kullanımı ve Demo
+1.  **Bağımlılıkları Kurun:** `npm install`
+2.  **Servisi Geliştirme Modunda Başlatın:** `npm run dev`
+3.  **Testleri Çalıştırın:** `npm test`
 
-Servisin API'ını test etmek ve konektör mimarisinin nasıl çalıştığını görmek için lütfen aşağıdaki rehberi inceleyin:
+## 🤝 Katkıda Bulunma
 
-➡️ **[API Kullanım ve Demo Rehberi (DEMO.md)](DEMO.md)**
+Katkılarınızı bekliyoruz! Lütfen projenin ana [Sentiric Governance](https://github.com/sentiric/sentiric-governance) reposundaki kodlama standartlarına ve katkıda bulunma rehberine göz atın.
 
-## 💻 Yerel Geliştirme ve Test
+---
+## 🏛️ Anayasal Konum
 
-1.  Node.js v20+ ve `npm` kurulu olduğundan emin olun.
-2.  Bağımlılıkları kurun:
-    ```bash
-    npm install
-    ```
-3.  Servisi geliştirme modunda (hot-reload ile) başlatın:
-    ```bash
-    npm run dev
-    ```
-4.  Testleri çalıştırın:
-    ```bash
-    npm test
-    ```
+Bu servis, [Sentiric Anayasası'nın (v11.0)](https://github.com/sentiric/sentiric-governance/blob/main/docs/blueprint/Architecture-Overview.md) **Zeka & Orkestrasyon Katmanı**'nda yer alan merkezi bir bileşendir.
