@@ -1,43 +1,54 @@
-# 🔌 Sentiric Connectors Service - Görev Listesi
+# 🔌 Sentiric Connectors Service - Geliştirme Yol Haritası (v4.0)
 
-Bu belge, `connectors-service`'in geliştirme yol haritasını ve önceliklerini tanımlar.
-
----
-
-### Faz 1: Temel Konektör Altyapısı (Mevcut Durum)
-
-Bu faz, servisin "Tak-Çıkar" konektör mimarisini kurmayı ve ilk temel konektörleri oluşturmayı hedefler.
-
--   [x] **Fastify Tabanlı Sunucu:** Yüksek performanslı ve genişletilebilir bir API sunucusu oluşturma.
--   [x] **Konektör Kayıt Merkezi (`ConnectorRegistry`):** Yeni konektörlerin dinamik olarak kaydedilmesini ve çağrılmasını sağlayan merkezi bir mekanizma.
--   [x] **Tip Güvenliği:** Gelen istekleri `TypeBox` ile doğrulama.
--   [x] **Dummy Connector:** Mimarinin çalıştığını kanıtlayan basit bir "ping/echo" konektörü.
--   [x] **Gözlemlenebilirlik:** Prometheus metrikleri ve yapılandırılmış loglama entegrasyonu.
+Bu belge, `connectors-service`'in geliştirme görevlerini projenin genel fazlarına uygun olarak listeler.
 
 ---
 
-### Faz 2: Gerçek Dünya Entegrasyonları (Sıradaki Öncelik)
+### **FAZ 1: Temel Konektör Altyapısı (Mevcut Durum)**
 
-Bu faz, platformun gerçek iş süreçlerini otomatize etmesini sağlayacak ilk entegrasyonları hayata geçirmeyi hedefler.
+**Amaç:** Servisin, yeni konektörlerin kolayca eklenebileceği, dinamik ve tip-güvenli bir temel üzerine inşa edilmesi.
+
+-   [x] **Görev ID: CONN-CORE-01 - Fastify Sunucusu ve Gözlemlenebilirlik**
+    -   **Durum:** ✅ **Tamamlandı**
+    -   **Kabul Kriterleri:** Servis, `/api/v1/run` ve `/health` endpoint'lerini sunar. Prometheus metrikleri ve yapılandırılmış loglama standartlara uygun şekilde çalışır.
+
+-   [x] **Görev ID: CONN-CORE-02 - Dinamik Konektör Mimarisi**
+    -   **Durum:** ✅ **Tamamlandı**
+    -   **Kabul Kriterleri:** `ConnectorRegistry`, başlangıçta konektörleri dinamik olarak yükler. Gelen istekteki `connector_name` ve `action_name`'e göre doğru fonksiyonu çağırır. `TypeBox` ile gelen `payload` doğrulanır.
+
+---
+
+### **FAZ 2: Gerçek Dünya Entegrasyonları (Sıradaki Öncelik)**
+
+**Amaç:** Platformun temel "randevu alma" ve "CRM yönetimi" gibi iş süreçlerini otomatize etmesini sağlayacak ilk entegrasyonları hayata geçirmek.
 
 -   [ ] **Görev ID: CONN-001 - Google Calendar Connector**
-    -   **Açıklama:** Google Calendar API'si ile entegre olarak, `create_event`, `find_available_slots` gibi eylemleri destekleyen bir konektör geliştir. Bu, "randevu alma" senaryosunun temelini oluşturacaktır.
-    -   **Durum:** ⬜ Planlandı.
-
--   [ ] **Görev ID: CONN-002 - Salesforce Connector**
-    -   **Açıklama:** Salesforce API'si ile entegre olarak, `get_contact_details`, `create_lead`, `update_case` gibi eylemleri destekleyen bir konektör geliştir.
-    -   **Durum:** ⬜ Planlandı.
+    -   **Açıklama:** Google Calendar API'si ile entegre olarak, `create_event` ve `find_available_slots` gibi eylemleri destekleyen bir konektör geliştir.
+    -   **Kabul Kriterleri:**
+        -   [ ] Konektör, Google API için OAuth 2.0 kimlik doğrulamasını başarıyla tamamlayabilmelidir.
+        -   [ ] `find_available_slots(date_range, duration)` eylemi, belirtilen aralıkta uygun zaman dilimlerini bir liste olarak döndürmelidir.
+        -   [ ] `create_event(start_time, end_time, summary)` eylemi, takvimde yeni bir etkinlik oluşturmalı ve oluşturulan etkinliğin ID'sini döndürmelidir.
 
 -   [ ] **Görev ID: CONN-003 - Güvenli Kimlik Bilgisi Yönetimi**
-    -   **Açıklama:** Konektörlerin ihtiyaç duyduğu API anahtarları gibi hassas bilgileri, her istekte göndermek yerine, güvenli bir şekilde sunucu tarafında saklayacak bir mekanizma geliştir (örn: HashiCorp Vault veya şifrelenmiş veritabanı tablosu).
-    -   **Durum:** ⬜ Planlandı.
+    -   **Açıklama:** Konektörlerin ihtiyaç duyduğu API anahtarları gibi hassas bilgileri güvenli bir şekilde sunucu tarafında yönet.
+    -   **Kabul Kriterleri:**
+        -   [ ] Hassas bilgiler (API anahtarları, OAuth token'ları) koddan ve `.env` dosyalarından çıkarılmalıdır.
+        -   [ ] Bu bilgiler, şifrelenmiş bir veritabanı tablosunda veya HashiCorp Vault gibi bir sır yönetim aracında saklanmalıdır.
+        -   [ ] Konektörler, ihtiyaç duydukları kimlik bilgilerini bu güvenli depodan çalışma zamanında almalıdır.
+
+-   [ ] **Görev ID: CONN-002 - Salesforce (veya başka bir CRM) Connector**
+    -   **Açıklama:** Bir CRM sistemi ile entegre olarak `get_contact_details` ve `create_lead` gibi temel eylemleri destekleyen bir konektör geliştir.
+    -   **Kabul Kriterleri:**
+        -   [ ] Konektör, CRM API'sine başarılı bir şekilde kimlik doğrulaması yapabilmelidir.
+        -   [ ] `get_contact_details(phone_number)` eylemi, ilgili kişiye ait temel bilgileri (isim, e-posta vb.) döndürmelidir.
+        -   [ ] `create_lead(name, phone_number)` eylemi, CRM'de yeni bir potansiyel müşteri kaydı oluşturmalı ve ID'sini döndürmelidir.
 
 ---
 
-### Faz 3: Geliştirici Ekosistemi
+### **FAZ 3: Geliştirici Ekosistemi ve Genişleme**
 
-Bu faz, üçüncü parti geliştiricilerin platforma kendi konektörlerini eklemesini kolaylaştırmayı hedefler.
+**Amaç:** Üçüncü parti geliştiricilerin platforma kendi konektörlerini eklemesini kolaylaştırmak.
 
 -   [ ] **Görev ID: CONN-004 - Konektör SDK'sı**
-    -   **Açıklama:** Yeni konektörler geliştirmeyi kolaylaştıran bir TypeScript/JavaScript SDK'sı oluştur. Bu SDK, kimlik doğrulama, hata yönetimi gibi ortak görevleri soyutlamalıdır.
+    -   **Açıklama:** Yeni konektörler geliştirmeyi kolaylaştıran bir TypeScript/JavaScript SDK'sı oluştur.
     -   **Durum:** ⬜ Planlandı.
