@@ -6,8 +6,17 @@ dist/
 logs
 *.log
 
-# Environment files
+# Ortam dosyaları
 .env
+.env.*
+!.env.example          # örnek config dosyasını tut
+
+# Çalışma zamanı veya geçici dosyalar
+.env.generated
+.profile.state
+
+# Loglar
+*.log
 
 # Test & coverage
 .nyc_output
