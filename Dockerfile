@@ -1,6 +1,12 @@
 # --- STAGE 1: Dependencies ---
 # Bu aşama, tüm (dev dahil) bağımlılıkları kurar.
 FROM node:20-alpine AS deps
+
+# Build argümanlarını build aşamasında kullanılabilir yap
+ARG GIT_COMMIT="unknown"
+ARG BUILD_DATE="unknown"
+ARG SERVICE_VERSION="0.0.0"
+
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci

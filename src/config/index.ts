@@ -11,7 +11,7 @@ const ConfigSchema = Type.Object({
     enum: ['development', 'production', 'test'],
   }),
   HOST: Type.String({ default: '0.0.0.0' }),
-  PORT: Type.Number({ default: 5005 }),
+  PORT: Type.Number({ default: 17010 }),
   LOG_LEVEL: Type.String({ default: 'info' }),
   GOOGLE_CALENDAR_API_KEY: Type.Optional(Type.String()),
   SALESFORCE_API_KEY: Type.Optional(Type.String()),
